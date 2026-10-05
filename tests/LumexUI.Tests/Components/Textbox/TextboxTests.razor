@@ -258,4 +258,69 @@
 
         action.Should().Throw<InvalidOperationException>();
     }
+
+    [Fact]
+    public void ShouldKeepTypedTextWhenRerenderedBeforeChangeEventWhenBehaviorOnChange()
+    {
+        var cut = Render<LumexTextbox>(
+            @<LumexTextbox Label="Test" Behavior="@InputBehavior.OnChange" />);
+
+        cut.Find( "input" ).Input( "typed" );
+        cut.Render();
+
+        cut.Instance.Value.Should().BeNullOrEmpty( because: "OnChange commits on the change event only." );
+        cut.Find( "input" ).GetAttribute( "value" ).Should().Be( "typed", because: "A render must not revert text the user has typed." );
+    }
+
+    [Fact]
+    public void ShouldKeepTypedTextWhileDebounceIsPendingWhenBehaviorOnInput()
+    {
+        var cut = Render<LumexTextbox>(
+            @<LumexTextbox Label="Test" Behavior="@InputBehavior.OnInput" DebounceDelay="200" />);
+
+        cut.Find( "input" ).Input( "typed" );
+
+        cut.Instance.Value.Should().BeNullOrEmpty( because: "Elapsed time (0ms) < 200ms." );
+        cut.Find( "input" ).GetAttribute( "value" ).Should().Be( "typed", because: "A render must not revert text the user has typed." );
+    }
+
+    [Fact]
+    public void ShouldRenderValueSetByParentAfterTyping()
+    {
+        var cut = Render<LumexTextbox>(
+            @<LumexTextbox Label="Test" Behavior="@InputBehavior.OnChange" />);
+
+        cut.Find( "input" ).Input( "typed" );
+        cut.SetParametersAndRender( p => p.Add( c => c.Value, "from parent" ) );
+
+        cut.Find( "input" ).GetAttribute( "value" ).Should().Be( "from parent" );
+    }
+
+    [Fact]
+    public void ShouldRenderParentResetAfterTypedTextWasCommitted()
+    {
+        var cut = Render<LumexTextbox>(
+            @<LumexTextbox Label="Test" Behavior="@InputBehavior.OnInput" />);
+
+        cut.Find( "input" ).Input( "typed" );
+        cut.Instance.Value.Should().Be( "typed" );
+
+        cut.SetParametersAndRender( p => p.Add( c => c.Value, null ) );
+
+        cut.Find( "input" ).GetAttribute( "value" ).Should().BeNullOrEmpty(
+            because: "The value moved after the text was typed, even though it moved back to what it was before." );
+    }
+
+    [Fact]
+    public void ShouldClearTypedTextOnClearWhenClearable()
+    {
+        var cut = Render<LumexTextbox>(
+            @<LumexTextbox Label="Test" Clearable="@true" Behavior="@InputBehavior.OnChange" Value="test" />);
+
+        cut.Find( "input" ).Input( "typed" );
+        cut.Find( "[data-slot=clear-button]" ).Click();
+
+        cut.Instance.Value.Should().BeNull();
+        cut.Find( "input" ).GetAttribute( "value" ).Should().BeNullOrEmpty();
+    }
 }

@@ -31,7 +31,9 @@
             @StartContent
             <textarea class="@InputClass"
                       rows="@MinRows"
-                      value="@CurrentValueAsString"
+                      @bind-value:get="@InputText"
+                      @bind-value:set="@SetInputTextAsync"
+                      @bind-value:event="oninput"
                       placeholder="@Placeholder"
                       disabled="@Disabled"
                       readonly="@ReadOnly"
@@ -44,7 +46,6 @@
                       @ref="@ElementReference"
                       @attributes="@AdditionalAttributes"
                       @onchange="@OnChangeAsync"
-                      @oninput="@OnInputAsync"
                       @onfocus="@OnFocusAsync"
                       @onblur="@OnBlurAsync"></textarea>
             @EndContent

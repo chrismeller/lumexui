@@ -216,6 +216,47 @@ public abstract partial class LumexInputFieldBase<TValue> : LumexInputBase<TValu
 	/// <returns>A <see cref="Task"/> representing the asynchronous value input operation.</returns>
 	protected abstract Task OnInputAsync( ChangeEventArgs args );
 
+	private string? _inputText;
+	private bool _hasInputText;
+	private TValue? _valueAtInput;
+
+	/// <summary>
+	/// The text the input element renders. It is the text the browser last reported for as long as
+	/// <see cref="LumexInputBase{TValue}.Value"/> has not moved since that input event, and the formatted
+	/// value otherwise.
+	/// </summary>
+	/// <remarks>
+	/// The element binds this with <c>@bind-value:event="oninput"</c> rather than rendering a raw
+	/// <c>value</c> attribute beside an <c>@oninput</c> handler. Binding is what makes Blazor record the
+	/// text each input event carried as the element's last-rendered value, so on a high-latency
+	/// (Blazor Server) connection a render answering an older keystroke does not overwrite newer typing.
+	/// Rendering the browser's own text while <c>Value</c> has not caught up (OnChange behavior, or a
+	/// pending debounce) keeps those renders from reverting the field to the last committed value.
+	/// </remarks>
+	private protected string? InputText
+	{
+		get
+		{
+			// Once Value moves (committed, cleared, or set by the parent) the typed text is superseded
+			// for good, even if Value later returns to what it was when the text was typed.
+			if( _hasInputText && !EqualityComparer<TValue>.Default.Equals( Value, _valueAtInput ) )
+			{
+				_hasInputText = false;
+			}
+
+			return _hasInputText ? _inputText : CurrentValueAsString;
+		}
+	}
+
+	private protected Task SetInputTextAsync( string? value )
+	{
+		_inputText = value;
+		_hasInputText = true;
+		_valueAtInput = Value;
+
+		return OnInputAsync( new ChangeEventArgs { Value = value } );
+	}
+
 	/// <summary>
 	/// Handles change events asynchronously.
 	/// </summary>
@@ -283,6 +324,7 @@ public abstract partial class LumexInputFieldBase<TValue> : LumexInputBase<TValu
 
 	private async Task ClearAsyncCore()
 	{
+		_hasInputText = false;
 		await SetCurrentValueAsync( default );
 		await OnCleared.InvokeAsync();
 		await FocusAsync();

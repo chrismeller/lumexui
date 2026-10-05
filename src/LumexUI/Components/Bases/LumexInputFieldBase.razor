@@ -52,7 +52,9 @@
 
                 <input type="@_inputType"
                        class="@InputClass"
-                       value="@CurrentValueAsString"
+                       @bind-value:get="@InputText"
+                       @bind-value:set="@SetInputTextAsync"
+                       @bind-value:event="oninput"
                        placeholder="@Placeholder"
                        disabled="@Disabled"
                        readonly="@ReadOnly"
@@ -64,7 +66,6 @@
                        @ref="@ElementReference"
                        @attributes="@AdditionalAttributes"
                        @onchange="@OnChangeAsync"
-                       @oninput="@OnInputAsync"
                        @onfocus="@OnFocusAsync"
                        @onblur="@OnBlurAsync" />
 
