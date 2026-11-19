@@ -71,16 +71,40 @@
 		</ItemGroup>
 	</Target>
 	
-	<!-- Install the JS dependencies with pnpm if 'node_modules' is not present -->
-	<Target Name="Npm" AfterTargets="Build" Condition="!Exists('node_modules')">
-		<Message Text="Running pnpm install..." Importance="high" />
+	<!--
+		Bundles wwwroot/js/components/popover.js with @floating-ui/dom into popover.bundle.js. The bundle is
+		generated, not committed, so building this project needs Node and pnpm (mise.toml). It runs before the
+		build so the static web assets pick the file up.
+	-->
+	<PropertyGroup>
+		<PopoverBundle>wwwroot/js/components/popover.bundle.js</PopoverBundle>
+	</PropertyGroup>
+
+	<Target Name="PnpmInstall" Condition="!Exists('node_modules')">
 		<Exec Command="pnpm install --frozen-lockfile" />
 	</Target>
 
-	<!-- Run the rollup after npm dependencies are installed -->
-	<Target Name="Rollup" AfterTargets="Npm">
-		<Message Text="Running rollup..." Importance="high" />
+	<Target Name="BundleJsCore"
+			DependsOnTargets="PnpmInstall"
+			Inputs="wwwroot/js/components/popover.js;package.json;pnpm-lock.yaml;rollup.config.mjs"
+			Outputs="$(PopoverBundle)">
 		<Exec Command="pnpm exec rollup -c" />
+	</Target>
+
+	<!--
+		Each target framework builds in parallel. Calling the bundle step on the project without a TargetFramework
+		gives every inner build the same project instance, so MSBuild runs it once and the others wait for it.
+	-->
+	<Target Name="BundleJs" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true'">
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BundleJsCore" RemoveProperties="TargetFramework" />
+	</Target>
+
+	<!-- Make sure a bundle that didn't exist when the project was evaluated is still a static web asset. -->
+	<Target Name="IncludeJsBundle" AfterTargets="BundleJs" Condition="'$(DesignTimeBuild)' != 'true'">
+		<ItemGroup>
+			<Content Remove="$(PopoverBundle)" />
+			<Content Include="$(PopoverBundle)" />
+		</ItemGroup>
 	</Target>
 
 	<!-- Remove these files from the build output -->
