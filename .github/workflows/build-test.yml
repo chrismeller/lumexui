@@ -10,9 +10,16 @@ on:
       - "src/**"
       - "tests/**"
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    env:
+      # Credentials for the "chrismeller" GitHub Packages source in nuget.config.
+      NuGetPackageSourceCredentials_chrismeller: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -24,6 +31,9 @@ jobs:
           dotnet-version: |
             8.0.x
             9.0.x
+
+      - name: Setup Node and pnpm
+        uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5
 
       - name: Restore
         run: dotnet restore
