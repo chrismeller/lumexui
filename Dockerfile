@@ -18,12 +18,10 @@ COPY . .
 RUN --mount=type=secret,id=github_token,required=true \
     NuGetPackageSourceCredentials_chrismeller="Username=docker;Password=$(cat /run/secrets/github_token)" \
     dotnet publish ./docs/LumexUI.Docs -c Release -o app
+RUN node ./scripts/export-static.mjs app/LumexUI.Docs.dll /static
 
 # -----------------------------
-# Stage 2: runtime
+# Stage 2: static site
 # -----------------------------
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
-COPY --from=build /src/app .
-
-EXPOSE 8080
-ENTRYPOINT ["dotnet","LumexUI.Docs.dll"]
+FROM alpine:3
+COPY --from=build /static /static
