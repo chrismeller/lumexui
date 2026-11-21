@@ -10,14 +10,14 @@
 		<Title>LumexUI</Title>
 		<Description>🚀 A versatile Blazor UI library built using Tailwind CSS.</Description>
 		<Version>2.4.0</Version>
-		<Authors>desmondinho</Authors>
+		<Authors>desmondinho;chrismeller</Authors>
 		<PackageId>LumexUI</PackageId>
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageTags>blazor;components;library;tailwindcss;</PackageTags>
-		<PackageProjectUrl>https://lumexui.org</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/chrismeller/lumexui</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<RepositoryUrl>https://github.com/LumexUI/lumexui</RepositoryUrl>
+		<RepositoryUrl>https://github.com/chrismeller/lumexui</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
@@ -48,16 +48,16 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.19" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.34" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.23" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Blazor.Sonner" Version="0.0.5" />
-		<PackageReference Include="LumexUI.Motion" Version="0.0.4" />
+		<PackageReference Include="LumexUI.Motion" Version="0.1.0" />
 		<PackageReference Include="TailwindMerge.NET" Version="1.0.0" />
 	</ItemGroup>
 
@@ -71,22 +71,46 @@
 		</ItemGroup>
 	</Target>
 	
-	<!-- Install npm dependencies if 'node_modules' is not present -->
-	<Target Name="Npm" AfterTargets="Build" Condition="!Exists('node_modules')">
-		<Message Text="Running npm ci..." Importance="high" />
-		<Exec Command="npm ci" />
+	<!--
+		Bundles wwwroot/js/components/popover.js with @floating-ui/dom into popover.bundle.js. The bundle is
+		generated, not committed, so building this project needs Node and pnpm (mise.toml). It runs before the
+		build so the static web assets pick the file up.
+	-->
+	<PropertyGroup>
+		<PopoverBundle>wwwroot/js/components/popover.bundle.js</PopoverBundle>
+	</PropertyGroup>
+
+	<Target Name="PnpmInstall" Condition="!Exists('node_modules')">
+		<Exec Command="pnpm install --frozen-lockfile" />
 	</Target>
 
-	<!-- Run the rollup after npm dependencies are installed -->
-	<Target Name="Rollup" AfterTargets="Npm">
-		<Message Text="Running rollup..." Importance="high" />
-		<Exec Command="npx rollup -c" />
+	<Target Name="BundleJsCore"
+			DependsOnTargets="PnpmInstall"
+			Inputs="wwwroot/js/components/popover.js;package.json;pnpm-lock.yaml;rollup.config.mjs"
+			Outputs="$(PopoverBundle)">
+		<Exec Command="pnpm exec rollup -c" />
+	</Target>
+
+	<!--
+		Each target framework builds in parallel. Calling the bundle step on the project without a TargetFramework
+		gives every inner build the same project instance, so MSBuild runs it once and the others wait for it.
+	-->
+	<Target Name="BundleJs" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true'">
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BundleJsCore" RemoveProperties="TargetFramework" />
+	</Target>
+
+	<!-- Make sure a bundle that didn't exist when the project was evaluated is still a static web asset. -->
+	<Target Name="IncludeJsBundle" AfterTargets="BundleJs" Condition="'$(DesignTimeBuild)' != 'true'">
+		<ItemGroup>
+			<Content Remove="$(PopoverBundle)" />
+			<Content Include="$(PopoverBundle)" />
+		</ItemGroup>
 	</Target>
 
 	<!-- Remove these files from the build output -->
 	<ItemGroup>
 		<Content Remove="package.json" />
-		<Content Remove="package-lock.json" />
+		<Content Remove="pnpm-lock.yaml" />
 	</ItemGroup>
 
 	<ItemGroup>
