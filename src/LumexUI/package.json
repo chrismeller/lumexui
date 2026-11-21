@@ -9,5 +9,5 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "rollup": "^4.59.0"
   },
-  "packageManager": "pnpm@10.28.0"
+  "packageManager": "pnpm@10.34.5"
 }
