@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.1](https://github.com/chrismeller/lumexui/compare/v2.5.0...v2.5.1) (2026-11-21)
+
+
+### Dependency Updates
+
+* update dependency microsoft.aspnetcore.components.webassembly.server to 9.0.21 [security] ([#7](https://github.com/chrismeller/lumexui/issues/7)) ([c244b25](https://github.com/chrismeller/lumexui/commit/c244b256eae7f7a1f2e71e825d3e795dd83ff9ff))
+* update pnpm to v10.34.5 [security] ([#8](https://github.com/chrismeller/lumexui/issues/8)) ([d9bb215](https://github.com/chrismeller/lumexui/commit/d9bb215a962a0c48c660c8356f8cdd481710d2c8))
+
 ## [2.5.0](https://github.com/chrismeller/lumexui/compare/v2.4.0...v2.5.0) (2026-11-21)
 
 
