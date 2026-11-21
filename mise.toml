@@ -1,4 +1,6 @@
 [tools]
+# Keep in step with global.json; Renovate bumps both in one PR.
+dotnet = "9.0.321"
 # Node and pnpm run the Rollup bundle step in src/LumexUI's build.
 node = "26.13.1"
 pnpm = "10.28.0"
