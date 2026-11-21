@@ -23,5 +23,5 @@ RUN node ./scripts/export-static.mjs app/LumexUI.Docs.dll /static
 # -----------------------------
 # Stage 2: static site
 # -----------------------------
-FROM alpine:3
+FROM alpine:3@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
 COPY --from=build /static /static
