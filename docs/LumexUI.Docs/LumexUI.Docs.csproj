@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<DocsGeneratorProject>dotnet run -c Release --project "$(SolutionDir)docs/LumexUI.Docs.Generator/LumexUI.Docs.Generator.csproj"</DocsGeneratorProject>
+		<DocsGeneratorProject>$(MSBuildThisFileDirectory)../LumexUI.Docs.Generator/LumexUI.Docs.Generator.csproj</DocsGeneratorProject>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -19,8 +19,14 @@
 		<ProjectReference Include="../LumexUI.Docs.Generator/LumexUI.Docs.Generator.csproj" />
 	</ItemGroup>
 
+	<!--
+		Build the generator through MSBuild so a solution build shares one build of it,
+		then run it without building. A plain `dotnet run` rebuilt the generator in a
+		separate process and raced the solution build on its deps.json.
+	-->
 	<Target Name="RunDocsGenerator" BeforeTargets="BeforeBuild">
-		<Exec Command="$(DocsGeneratorProject)" />
+		<MSBuild Projects="$(DocsGeneratorProject)" Targets="Build" />
+		<Exec Command="dotnet run --no-build -c $(Configuration) --project &quot;$(DocsGeneratorProject)&quot;" />
 	</Target>
 
 	<Target Name="InstallTailwind" AfterTargets="Build" Condition="!Exists('tailwindcss.exe')">
