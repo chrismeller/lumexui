@@ -28,6 +28,11 @@ public abstract class LumexDebouncedInputBase<TValue> : LumexInputFieldBase<TVal
 	/// </remarks>
 	[Parameter] public InputBehavior Behavior { get; set; } = InputBehavior.OnChange;
 
+	/// <summary>
+	/// Gets or sets the clock that times the debounce delay. Tests replace it with a fake clock.
+	/// </summary>
+	internal TimeProvider TimeProvider { get; set; } = TimeProvider.System;
+
 	private readonly Debouncer _debouncer;
 
 	/// <summary>
@@ -59,7 +64,7 @@ public abstract class LumexDebouncedInputBase<TValue> : LumexInputFieldBase<TVal
 
 		if( DebounceDelay > 0 )
 		{
-			return _debouncer.DebounceAsync( SetCurrentValueAsStringAsync, (string?)args.Value, DebounceDelay );
+			return _debouncer.DebounceAsync( SetCurrentValueAsStringAsync, (string?)args.Value, DebounceDelay, TimeProvider );
 		}
 
 		return SetCurrentValueAsStringAsync( (string?)args.Value );
@@ -91,10 +96,11 @@ public abstract class LumexDebouncedInputBase<TValue> : LumexInputFieldBase<TVal
 		private bool _disposed;
 		private CancellationTokenSource? _cts;
 
-		public async Task DebounceAsync( Func<string?, Task> workItem, string? arg, int milliseconds )
+		public async Task DebounceAsync( Func<string?, Task> workItem, string? arg, int milliseconds, TimeProvider timeProvider )
 		{
 			ObjectDisposedException.ThrowIf( _disposed, this );
 			ArgumentNullException.ThrowIfNull( workItem );
+			ArgumentNullException.ThrowIfNull( timeProvider );
 
 			// Cancel/dispose any pending debounce.
 			_cts?.Cancel();
@@ -110,7 +116,7 @@ public abstract class LumexDebouncedInputBase<TValue> : LumexInputFieldBase<TVal
 
 			try
 			{
-				await Task.Delay( milliseconds, cts.Token );
+				await Task.Delay( TimeSpan.FromMilliseconds( milliseconds ), timeProvider, cts.Token );
 
 				// Debounce time has passed without further input; trigger the debounced event.
 				await workItem( arg );
