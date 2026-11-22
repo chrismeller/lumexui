@@ -61,19 +61,21 @@ jobs:
           ref: ${{ needs.release-please.outputs.tag }}
           persist-credentials: false
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            8.0.x
-            9.0.x
-
-      # Node and pnpm build popover.bundle.js during the build.
-      - name: Setup Node and pnpm
+      # The .NET SDK (pinned in global.json), Node and pnpm, from mise.toml. Node and pnpm build
+      # popover.bundle.js during the build.
+      - name: Setup mise
         uses: jdx/mise-action@924e7c586e33d7d4bae9c14e26c5d22e2beb6e78 # v5
 
+      # Build the whole solution so LumexUI is built for every target framework, test it, then pack
+      # exactly what was tested.
+      - name: Build
+        run: dotnet build -c Release
+
+      - name: Test
+        run: dotnet test -c Release --no-build
+
       - name: Pack LumexUI
-        run: dotnet pack src/LumexUI/LumexUI.csproj -c Release --output nupkgs
+        run: dotnet pack src/LumexUI/LumexUI.csproj -c Release --no-build --output nupkgs
 
       - name: Push to GitHub Packages
         run: >-

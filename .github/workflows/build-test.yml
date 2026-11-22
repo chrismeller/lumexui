@@ -1,22 +1,27 @@
 name: Build and Test
 
+# Runs on every PR whatever it changes: Renovate auto-merges once checks pass, and an update to a
+# workflow, mise.toml, nuget.config or global.json can break the build without touching src/.
 on:
   pull_request:
+  push:
     branches:
-      - dev
       - main
-    paths:
-      - "docs/**"
-      - "src/**"
-      - "tests/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
   packages: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Cancel superseded PR runs, but let every push to main finish.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       # Credentials for the "chrismeller" GitHub Packages source in nuget.config.
       NuGetPackageSourceCredentials_chrismeller: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
@@ -25,14 +30,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            8.0.x
-            9.0.x
-
-      - name: Setup Node and pnpm
+      # The .NET SDK (pinned in global.json), Node and pnpm, from mise.toml.
+      - name: Setup mise
         uses: jdx/mise-action@924e7c586e33d7d4bae9c14e26c5d22e2beb6e78 # v5
 
       - name: Restore

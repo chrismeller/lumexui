@@ -5,6 +5,7 @@
 @using TailwindMerge
 @using LumexUI.Common
 @using Microsoft.Extensions.DependencyInjection
+@using Microsoft.Extensions.Time.Testing
 
 @code {
     public TextareaTests()
@@ -193,21 +194,23 @@
     }
 
     [Fact]
-    public async Task ShouldChangeValueAfterDebounceDelayWhenBehaviorOnInput()
+    public void ShouldChangeValueAfterDebounceDelayWhenBehaviorOnInput()
     {
+        var timeProvider = new FakeTimeProvider();
         var cut = Render<LumexTextarea>(
             @<LumexTextarea Label="Test" Behavior="@InputBehavior.OnInput" DebounceDelay="200" />);
+        cut.Instance.TimeProvider = timeProvider;
 
         var textarea = cut.Find( "textarea" );
         textarea.Input( "test" );
 
         cut.Instance.Value.Should().BeNullOrEmpty( because: "Elapsed time (0ms) < 200ms." );
 
-        await Task.Delay( 100 );
-        cut.Instance.Value.Should().BeNullOrEmpty( because: "Elapsed time (100ms) < 200ms." );
+        timeProvider.Advance( TimeSpan.FromMilliseconds( 199 ) );
+        cut.Instance.Value.Should().BeNullOrEmpty( because: "Elapsed time (199ms) < 200ms." );
 
-        await Task.Delay( 150 );
-        cut.WaitForAssertion( () => cut.Instance.Value.Should().Be( "test", because: "Elapsed time (250ms) > 200ms." ) );
+        timeProvider.Advance( TimeSpan.FromMilliseconds( 1 ) );
+        cut.WaitForAssertion( () => cut.Instance.Value.Should().Be( "test", because: "Elapsed time (200ms) >= 200ms." ) );
     }
 
     [Fact]
