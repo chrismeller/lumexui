@@ -19,6 +19,7 @@ public sealed class ConsoleErrorTests( DocsSite site ) : DocsPageTest( site )
         foreach( var path in paths )
         {
             ClearErrors();
+            var serverOutputStart = Site.ServerOutput.Length;
             // Wait for Blazor and for the WebAssembly download and start, including the example iframes on the navbar page,
             // each of which starts its own Blazor.
             await GotoAsync( path, WaitUntilState.Load );
@@ -26,6 +27,13 @@ public sealed class ConsoleErrorTests( DocsSite site ) : DocsPageTest( site )
             await WaitForNetworkQuietAsync( TimeSpan.FromSeconds( 1 ), TimeSpan.FromSeconds( 90 ) );
 
             failures.AddRange( Errors.Select( error => $"{path}: {error}" ) );
+
+            // A page that fails while the server prerenders it still answers 200, because the headers are already
+            // sent, and the browser only gets a cut-off page. The server's log is where that shows.
+            failures.AddRange( Site.ServerOutput[serverOutputStart..]
+                .Split( '\n' )
+                .Where( line => line.StartsWith( "fail:", StringComparison.Ordinal ) || line.StartsWith( "crit:", StringComparison.Ordinal ) )
+                .Select( line => $"{path}: server logged {line.TrimEnd()}" ) );
         }
 
         Assert.True( failures.Count == 0, string.Join( "\n", failures ) );
