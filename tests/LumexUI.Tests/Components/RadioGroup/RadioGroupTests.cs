@@ -9,7 +9,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class RadioGroupTests : TestContext
+public class RadioGroupTests : BunitContext
 {
     public RadioGroupTests()
     {
@@ -111,7 +111,7 @@ public class RadioGroupTests : TestContext
     [InlineData( null )]
     public void RadioGroup_BooleansAreParsedProperly( string? boolString )
     {
-        var action = () => RenderComponent<LumexRadioGroup<bool>>( c => c
+        var action = () => Render<LumexRadioGroup<bool>>( c => c
             .AddChildContent<LumexRadio<bool>>( r => r
                 .Add( p => p.Value, true )
                 .AddChildContent( "Yes" )
@@ -168,7 +168,7 @@ public class RadioGroupTests : TestContext
     [InlineData( null )]
     public void RadioGroup_NullableBooleansAreSupported( string? boolString )
     {
-        var action = () => RenderComponent<LumexRadioGroup<bool?>>( c => c
+        var action = () => Render<LumexRadioGroup<bool?>>( c => c
             .AddChildContent<LumexRadio<bool?>>( r => r
                 .Add( p => p.Value, true )
                 .AddChildContent( "Yes" )
@@ -229,7 +229,7 @@ public class RadioGroupTests : TestContext
     [InlineData( null )]
     public void RadioGroup_NullableValueTypesAreSupported( string? valueString )
     {
-        var action = () => RenderComponent<LumexRadioGroup<int?>>( c => c
+        var action = () => Render<LumexRadioGroup<int?>>( c => c
             .AddChildContent<LumexRadio<int?>>( r => r
                 .Add( p => p.Value, 1 )
                 .AddChildContent( "One" )
@@ -253,7 +253,7 @@ public class RadioGroupTests : TestContext
     [InlineData( null )]
     public void RadioGroup_NullableReferenceTypesAreSupported( string? stringValue )
     {
-        var action = () => RenderComponent<LumexRadioGroup<string?>>( c => c
+        var action = () => Render<LumexRadioGroup<string?>>( c => c
             .AddChildContent<LumexRadio<string?>>( r => r
                 .Add( p => p.Value, "One" )
                 .AddChildContent( "One" )
@@ -318,7 +318,7 @@ public class RadioGroupTests : TestContext
 
     private Func<IRenderedComponent<LumexRadioGroup<string>>> StarfleetOfficers( string groupName, string? selectedValue = null, bool isReadOnly = false, bool isDisabled = false )
     {
-        return () => RenderComponent<LumexRadioGroup<string>>( g => g
+        return () => Render<LumexRadioGroup<string>>( g => g
             .Add( p => p.Label, "Select Officer" )
             .Add( p => p.Description, "Select the officer you'd prefer to lead the away mission" )
             .Add( p => p.Name, groupName )

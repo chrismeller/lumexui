@@ -10,7 +10,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class CardTests : TestContext
+public class CardTests : BunitContext
 {
     public CardTests()
     {
@@ -20,7 +20,7 @@ public class CardTests : TestContext
     [Fact]
     public void Card_ShouldRenderCorrectly()
     {
-        var action = () => RenderComponent<LumexCard>();
+        var action = () => Render<LumexCard>();
 
         action.Should().NotThrow();
     }
@@ -28,7 +28,7 @@ public class CardTests : TestContext
     [Fact]
     public void CardHeader_ShouldRenderCorrectly()
     {
-        var action = () => RenderComponent<LumexCard>( p => p
+        var action = () => Render<LumexCard>( p => p
             .AddChildContent<LumexCardHeader>()
             .AddChildContent<LumexCardBody>()
             .AddChildContent<LumexCardFooter>()
@@ -40,7 +40,7 @@ public class CardTests : TestContext
     [Fact]
     public void CardHeader_StandaloneUsage_ShouldThrowInvalidOperation()
     {
-        var action = () => RenderComponent<LumexCardHeader>();
+        var action = () => Render<LumexCardHeader>();
 
         action.Should().Throw<ContextNullException>();
     }
@@ -48,7 +48,7 @@ public class CardTests : TestContext
     [Fact]
     public void CardBody_StandaloneUsage_ShouldThrowInvalidOperation()
     {
-        var action = () => RenderComponent<LumexCardBody>();
+        var action = () => Render<LumexCardBody>();
 
         action.Should().Throw<ContextNullException>();
     }
@@ -56,7 +56,7 @@ public class CardTests : TestContext
     [Fact]
     public void CardFooter_StandaloneUsage_ShouldThrowInvalidOperation()
     {
-        var action = () => RenderComponent<LumexCardFooter>();
+        var action = () => Render<LumexCardFooter>();
 
         action.Should().Throw<ContextNullException>();
     }

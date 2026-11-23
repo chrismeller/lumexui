@@ -1,5 +1,5 @@
 ﻿@namespace LumexUI.Tests.Components
-@inherits TestContext
+@inherits BunitContext
 
 @code {
     public SelectTests()
@@ -7,8 +7,8 @@
         Services.AddSingleton<TwMerge>();
 
         var module = JSInterop.SetupModule( "./_content/LumexUI/js/components/popover.bundle.js" );
-        module.SetupVoid( "popover.initialize", _ => true );
-        module.SetupVoid( "popover.destroy", _ => true );
+        module.SetupVoid( "popover.initialize", _ => true ).SetVoidResult();
+        module.SetupVoid( "popover.destroy", _ => true ).SetVoidResult();
     }
 
     [Fact]

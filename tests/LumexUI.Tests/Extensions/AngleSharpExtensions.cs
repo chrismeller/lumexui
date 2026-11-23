@@ -4,11 +4,13 @@
 
 using AngleSharp.Dom;
 
+using Microsoft.AspNetCore.Components;
+
 namespace LumexUI.Tests.Extensions;
 
 internal static class AngleSharpExtensions
 {
-	public static IElement? FindByTestId( this IRenderedFragment fragment, string id )
+	public static IElement? FindByTestId( this IRenderedComponent<IComponent> fragment, string id )
 	{
 		try
 		{
@@ -20,7 +22,7 @@ internal static class AngleSharpExtensions
 		}
 	}
 
-	public static IElement? FindBySlot( this IRenderedFragment fragment, string slot )
+	public static IElement? FindBySlot( this IRenderedComponent<IComponent> fragment, string slot )
 	{
 		try
 		{

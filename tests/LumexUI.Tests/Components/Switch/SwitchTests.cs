@@ -10,7 +10,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class SwitchTests : TestContext
+public class SwitchTests : BunitContext
 {
 	public SwitchTests()
 	{
@@ -20,7 +20,7 @@ public class SwitchTests : TestContext
 	[Fact]
 	public void Switch_ShouldRenderCorrectly()
 	{
-		var action = () => RenderComponent<LumexSwitch>( p => p
+		var action = () => Render<LumexSwitch>( p => p
 			.Add( p => p.ValueExpression, () => true )
 		);
 
@@ -30,7 +30,7 @@ public class SwitchTests : TestContext
 	[Fact]
 	public void Switch_WithChildContent_ShouldRenderCorrectly()
 	{
-		var cut = RenderComponent<LumexSwitch>( p => p
+		var cut = Render<LumexSwitch>( p => p
 			.Add( p => p.ValueExpression, () => true )
 			.AddChildContent( "switch" )
 		);
@@ -41,7 +41,7 @@ public class SwitchTests : TestContext
 	[Fact]
 	public void Switch_WithThumbIcon_ShouldRenderCustomIcon()
 	{
-		var cut = RenderComponent<LumexSwitch>( p => p
+		var cut = Render<LumexSwitch>( p => p
 			.Add( p => p.ValueExpression, () => true )
 			.Add( p => p.ThumbContent, ( _ ) => "thumb-content" )
 		);
@@ -52,7 +52,7 @@ public class SwitchTests : TestContext
 	[Fact]
 	public void Switch_WithStartIcon_ShouldRenderCustomIcon()
 	{
-		var cut = RenderComponent<LumexSwitch>( p => p
+		var cut = Render<LumexSwitch>( p => p
 			.Add( p => p.ValueExpression, () => true )
 			.Add( p => p.StartContent, "start-content" )
 		);
@@ -63,7 +63,7 @@ public class SwitchTests : TestContext
 	[Fact]
 	public void Switch_WithEndIcon_ShouldRenderCustomIcon()
 	{
-		var cut = RenderComponent<LumexSwitch>( p => p
+		var cut = Render<LumexSwitch>( p => p
 			.Add( p => p.ValueExpression, () => true )
 			.Add( p => p.EndContent, "end-content" )
 		);
@@ -74,7 +74,7 @@ public class SwitchTests : TestContext
 	[Fact]
 	public void Switch_OnChange_ShouldChangeValue()
 	{
-		var cut = RenderComponent<LumexSwitch>( p => p
+		var cut = Render<LumexSwitch>( p => p
 			.Add( p => p.Value, false )
 			.Add( p => p.ValueExpression, () => true )
 		);
@@ -92,7 +92,7 @@ public class SwitchTests : TestContext
 	[InlineData( false, true )]
 	public void Switch_DisabledOrReadOnly_ShouldNotTriggerChange( bool disabled, bool readOnly )
 	{
-		var cut = RenderComponent<LumexSwitch>( p => p
+		var cut = Render<LumexSwitch>( p => p
 			.Add( p => p.Value, true )
 			.Add( p => p.ValueExpression, () => true )
 			.Add( p => p.Disabled, disabled )
@@ -110,7 +110,7 @@ public class SwitchTests : TestContext
 	[Fact]
 	public async Task Switch_SetCurrentValueAsString_ShouldThrowNotSupported()
 	{
-		var cut = RenderComponent<LumexSwitch>( p => p
+		var cut = Render<LumexSwitch>( p => p
 			.Add( p => p.Value, false )
 			.Add( p => p.ValueExpression, () => true )
 		);

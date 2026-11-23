@@ -1,5 +1,5 @@
 @namespace LumexUI.Tests.Components
-@inherits TestContext
+@inherits BunitContext
 
 @using Microsoft.AspNetCore.Components.Web
 @using TailwindMerge
@@ -16,9 +16,9 @@
         inputModule.Setup<string>( "input.getValidationMessage", _ => true );
 
         var textareaModule = JSInterop.SetupModule( "./_content/LumexUI/js/components/textarea.js" );
-        textareaModule.SetupVoid( "textarea.initialize", _ => true );
-        textareaModule.SetupVoid( "textarea.update", _ => true );
-        textareaModule.SetupVoid( "textarea.destroy", _ => true );
+        textareaModule.SetupVoid( "textarea.initialize", _ => true ).SetVoidResult();
+        textareaModule.SetupVoid( "textarea.update", _ => true ).SetVoidResult();
+        textareaModule.SetupVoid( "textarea.destroy", _ => true ).SetVoidResult();
     }
 
     [Fact]

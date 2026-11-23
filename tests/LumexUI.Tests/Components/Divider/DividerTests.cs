@@ -10,7 +10,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class DividerTests : TestContext
+public class DividerTests : BunitContext
 {
     public DividerTests()
     {
@@ -20,7 +20,7 @@ public class DividerTests : TestContext
     [Fact]
     public void Divider_ShouldRenderCorrectly()
     {
-        var action = () => RenderComponent<LumexDivider>();
+        var action = () => Render<LumexDivider>();
 
         action.Should().NotThrow();
     }
@@ -28,7 +28,7 @@ public class DividerTests : TestContext
     [Fact]
     public void Divider_Horizontal_ShouldRenderAsHr()
     {
-        var cut = RenderComponent<LumexDivider>( p => p
+        var cut = Render<LumexDivider>( p => p
             .Add( p => p.Orientation, Orientation.Horizontal )
         );
 
@@ -38,7 +38,7 @@ public class DividerTests : TestContext
     [Fact]
     public void Divider_Vertical_ShouldRenderAsDiv()
     {
-        var cut = RenderComponent<LumexDivider>( p => p
+        var cut = Render<LumexDivider>( p => p
             .Add( p => p.Orientation, Orientation.Vertical )
         );
 

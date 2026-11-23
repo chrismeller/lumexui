@@ -1,5 +1,5 @@
 @namespace LumexUI.Tests.Components
-@inherits TestContext
+@inherits BunitContext
 
 @using TailwindMerge
 @using LumexUI.Common
@@ -11,7 +11,7 @@
         Services.AddSingleton<TwMerge>();
 
         JSInterop.Setup<int>( "Lumex.elementReference.getScrollHeight", _ => true );
-        JSInterop.SetupVoid( "Lumex.elementReference.portalTo", _ => true );
+        JSInterop.SetupVoid( "Lumex.elementReference.portalTo", _ => true ).SetVoidResult();
     }
 
     [Fact]
@@ -87,7 +87,7 @@
     [Fact]
     public void ShouldNotOpenMenuOnNavigation()
     {
-        var navigationManager = Services.GetRequiredService<FakeNavigationManager>();
+        var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
         string[] menuItems = ["item1", "item2", "item3", "item4", "item5"];
 
         var cut = Render(

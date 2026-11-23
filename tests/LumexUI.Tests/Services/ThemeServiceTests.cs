@@ -12,7 +12,7 @@ using Microsoft.JSInterop.Infrastructure;
 
 namespace LumexUI.Tests.Services;
 
-public class ThemeServiceTests : TestContext
+public class ThemeServiceTests : BunitContext
 {
 	[Fact]
 	public async Task InitializeAsync_ShouldSetDarkTheme_WhenJsReturnsDark()

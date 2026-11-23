@@ -10,7 +10,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class InputBaseTests : TestContext
+public class InputBaseTests : BunitContext
 {
 	public InputBaseTests()
 	{
@@ -22,7 +22,7 @@ public class InputBaseTests : TestContext
 	public void InputBase_WithValue_ShouldGetCurrentValue()
 	{
 		var model = new TestModel();
-		var cut = RenderComponent<TestInputComponent<string?>>( p => p
+		var cut = Render<TestInputComponent<string?>>( p => p
 			.Add( p => p.Value, "some value" )
 			.Add( p => p.ValueExpression, () => model.StringProperty )
 		);
@@ -34,7 +34,7 @@ public class InputBaseTests : TestContext
 	public void InputBase_WhenChanged_ShouldReadBackChanges()
 	{
 		var model = new TestModel();
-		var cut = RenderComponent<TestInputComponent<string?>>( p => p
+		var cut = Render<TestInputComponent<string?>>( p => p
 			.Add( p => p.Value, "initial value" )
 			.Add( p => p.ValueExpression, () => model.StringProperty )
 		);
@@ -52,7 +52,7 @@ public class InputBaseTests : TestContext
 	public async Task InputBase_WhenChangedToNullOrEmptyWithNullableType_ShouldSetNull( string? value )
 	{
 		var model = new TestModel();
-		var cut = RenderComponent<TestInputComponent<int?>>( p => p
+		var cut = Render<TestInputComponent<int?>>( p => p
 			.Add( p => p.Value, 1 )
 			.Add( p => p.ValueExpression, () => model.NullableIntProperty )
 		);
@@ -67,7 +67,7 @@ public class InputBaseTests : TestContext
 	{
 		var dt = new DateTime( 1915, 3, 2 );
 		var model = new TestModel();
-		var cut = RenderComponent<TestInputComponent<DateTime>>( p => p
+		var cut = Render<TestInputComponent<DateTime>>( p => p
 			.Add( p => p.Value, dt )
 			.Add( p => p.ValueExpression, () => model.DateProperty )
 		);
@@ -81,7 +81,7 @@ public class InputBaseTests : TestContext
 	public void InputBase_WithValue_ShouldSupplyCurrentValueAsStringWithFormatting()
 	{
 		var model = new TestModel();
-		var cut = RenderComponent<TestDateboxComponent>( p => p
+		var cut = Render<TestDateboxComponent>( p => p
 			.Add( p => p.Value, new DateTime( 1915, 3, 2 ) )
 			.Add( p => p.ValueExpression, () => model.DateProperty )
 		);
@@ -93,7 +93,7 @@ public class InputBaseTests : TestContext
 	public async Task InputBase_WhenChangedValid_ShouldParseCurrentValueAsString()
 	{
 		var model = new TestModel();
-		var cut = RenderComponent<TestDateboxComponent>( p => p
+		var cut = Render<TestDateboxComponent>( p => p
 			.Add( p => p.Value, new DateTime( 1915, 3, 2 ) )
 			.Add( p => p.ValueExpression, () => model.DateProperty )
 		);
@@ -110,7 +110,7 @@ public class InputBaseTests : TestContext
 	public async Task InputBase_WhenChangedInvalid_ShouldNotParseCurrentValueAsString()
 	{
 		var model = new TestModel();
-		var cut = RenderComponent<TestDateboxComponent>( p => p
+		var cut = Render<TestDateboxComponent>( p => p
 			.Add( p => p.Value, new DateTime( 1915, 3, 2 ) )
 			.Add( p => p.ValueExpression, () => model.DateProperty )
 		);
@@ -127,7 +127,7 @@ public class InputBaseTests : TestContext
 	public void ShouldTriggerOnFocusCallbackAndSetFocusOnFocus()
 	{
 		var isFocused = false;
-		var cut = RenderComponent<LumexTextbox>( p => p
+		var cut = Render<LumexTextbox>( p => p
 			.Add( p => p.Value, "some value" )
 			.Add( p => p.OnFocus, () => isFocused = true )
 		);
@@ -144,7 +144,7 @@ public class InputBaseTests : TestContext
 	public void ShouldTriggerOnBlurCallbackAndRemoveFocusOnBlur()
 	{
 		var isBlurred = false;
-		var cut = RenderComponent<LumexTextbox>( p => p
+		var cut = Render<LumexTextbox>( p => p
 			.Add( p => p.Value, "some value" )
 			.Add( p => p.OnBlur, () => isBlurred = true )
 		);
