@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AwesomeAssertions" Version="8.0.1" />
+    <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
     <PackageReference Include="bunit" Version="2.15.2" />
     <PackageReference Include="coverlet.collector" Version="10.1.1">
       <PrivateAssets>all</PrivateAssets>
@@ -34,7 +34,7 @@
     <Using Include="Moq" />
     <Using Include="Xunit" />
     <Using Include="Bunit" />
-    <Using Include="FluentAssertions" />
+    <Using Include="AwesomeAssertions" />
   </ItemGroup>
 
 </Project>
