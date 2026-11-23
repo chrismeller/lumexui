@@ -40,9 +40,11 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
 app.UseAntiforgery();
 
+// On net10.0 the static files middleware answers 404 for _framework/blazor.web.js, which leaves every page
+// non-interactive. MapStaticAssets serves it, together with the rest of wwwroot.
+app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies( typeof( LumexUI.Docs.Client._Imports ).Assembly );
