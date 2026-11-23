@@ -25,7 +25,7 @@ public sealed class DocsSite : IAsyncLifetime
         get { lock( _serverOutput ) { return _serverOutput.ToString(); } }
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         var publishDir = Environment.GetEnvironmentVariable( PathVariable );
         if( string.IsNullOrWhiteSpace( publishDir ) )
@@ -62,7 +62,7 @@ public sealed class DocsSite : IAsyncLifetime
         } );
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         if( Browser is not null )
         {
