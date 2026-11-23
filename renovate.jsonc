@@ -46,11 +46,12 @@
     "dependencies"
   ],
 
-  // release-please cuts releases from conventional commits, so every Renovate PR title and commit is
-  // "deps: …", which release-please releases as a patch under "Dependency Updates".
+  // release-please cuts releases from conventional commits. "deps:" releases a patch and is listed under
+  // "Dependency Updates"; "chore(deps):" is hidden and releases nothing. Updates default to chore(deps):, and the
+  // last packageRules title only the dependencies that end up in the .nupkg "deps:".
   "semanticCommits": "enabled",
-  "semanticCommitType": "deps",
-  "semanticCommitScope": null,
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
 
   // LumexUI.Motion comes from the chrismeller GitHub Packages feed (nuget.config), which needs a token to
   // read even public packages. Add a classic PAT with only read:packages as the GITHUB_PACKAGES_TOKEN secret
@@ -113,10 +114,33 @@
       "groupName": "xunit",
       "matchPackageNames": ["/^xunit(\\.|$)/"]
     },
-    // Last, so it beats the fix/chore split config:best-practices applies through its own packageRules.
+    // These three come last, so they beat the fix/chore split config:best-practices applies through its own
+    // packageRules.
     {
-      "description": "Title every update deps: for release-please",
+      "description": "Title every update chore(deps): by default, so release-please doesn't release for it",
       "matchPackageNames": ["*"],
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "deps"
+    },
+    // What ships: the package references of the library projects under src/ (LumexUI and the Shared.Icons
+    // assembly packed into it, not tests or docs), and the npm runtime dependencies that Rollup bundles into
+    // popover.bundle.js. Rollup and its plugins, the SDK, pnpm, mise tools, Docker and GitHub Actions only build it.
+    //
+    // A branch that mixes deps: and chore(deps): updates is titled chore: (Renovate ranks the types and doesn't
+    // know deps), so a shipped bump grouped with a docs or test bump (the "dotnet monorepo" group does this)
+    // would release nothing. The extra branch prefix keeps shipped updates on branches of their own.
+    {
+      "description": "Title updates to shipped dependencies deps:, so release-please releases them",
+      "matchFileNames": ["src/**/*.csproj"],
+      "matchManagers": ["nuget"],
+      "additionalBranchPrefix": "nupkg-",
+      "semanticCommitType": "deps",
+      "semanticCommitScope": null
+    },
+    {
+      "description": "Title updates to the bundled npm runtime dependencies deps:, so release-please releases them",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["dependencies"],
       "semanticCommitType": "deps",
       "semanticCommitScope": null
     }
