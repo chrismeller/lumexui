@@ -1,0 +1,40 @@
+name: Dependency submission
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: read
+  id-token: write
+
+jobs:
+  dependency-submission:
+    name: Restore and submit dependencies
+    runs-on: ubuntu-latest
+
+    env:
+      # "chrismeller" must match the source key in NuGet.config.
+      NuGetPackageSourceCredentials_chrismeller: >-
+        Username=${{ github.actor }};Password=${{ github.token }};ValidAuthenticationTypes=Basic
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+
+      - name: Restore solution
+        run: dotnet restore ./LumexUI.sln
+
+      - name: Scan repository and submit dependencies
+        uses: advanced-security/component-detection-dependency-submission-action@v0.1.5
+        with:
+          filePath: .
+          correlator: component-detection
