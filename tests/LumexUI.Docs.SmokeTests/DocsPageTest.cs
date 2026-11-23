@@ -54,7 +54,7 @@ public abstract class DocsPageTest( DocsSite site ) : IAsyncLifetime
         _abortedInFrames.Clear();
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         _context = await Site.Browser.NewContextAsync( new() { BaseURL = Site.BaseUrl } );
 
@@ -95,7 +95,7 @@ public abstract class DocsPageTest( DocsSite site ) : IAsyncLifetime
         return match.Success && _abortedInFrames.ContainsKey( match.Groups["url"].Value );
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         await _context.DisposeAsync();
     }
