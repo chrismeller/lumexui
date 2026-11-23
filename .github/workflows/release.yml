@@ -4,6 +4,15 @@ on:
   push:
     branches:
       - main
+  # Publishes an existing release again, for when the publish job failed after release-please had already
+  # tagged it. Re-running the failed run doesn't help when the fix is in this file, because a re-run uses the
+  # workflow as it was at that run's commit.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish (for example v3.0.0)
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -14,6 +23,7 @@ concurrency:
 
 jobs:
   release-please:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -43,9 +53,14 @@ jobs:
   # trigger other workflows.
   publish:
     needs: release-please
-    if: needs.release-please.outputs.release_created == 'true'
+    # always() so a manual run, which skips release-please, still gets here.
+    if: >-
+      always() && (
+        (github.event_name == 'push' && needs.release-please.outputs.release_created == 'true') ||
+        github.event_name == 'workflow_dispatch'
+      )
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     permissions:
       contents: read
@@ -58,7 +73,7 @@ jobs:
       - name: Checkout release tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ needs.release-please.outputs.tag }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || needs.release-please.outputs.tag }}
           persist-credentials: false
 
       # The .NET SDK (pinned in global.json), Node and pnpm, from mise.toml. Node and pnpm build
@@ -66,13 +81,25 @@ jobs:
       - name: Setup mise
         uses: jdx/mise-action@924e7c586e33d7d4bae9c14e26c5d22e2beb6e78 # v5
 
-      # Build the whole solution so LumexUI is built for every target framework, test it, then pack
-      # exactly what was tested.
+      # Build the whole solution, run the same tests as Build and Test, then pack exactly what was tested.
       - name: Build
         run: dotnet build -c Release
 
       - name: Test
-        run: dotnet test -c Release --no-build
+        run: dotnet test tests/LumexUI.Tests -c Release --no-build
+
+      # The browser smoke tests need the published docs site and Chromium, so they can't run as part of a
+      # plain `dotnet test` of the solution.
+      - name: Publish the docs site
+        run: dotnet publish docs/LumexUI.Docs -c Release -o artifacts/docs
+
+      - name: Install Chromium for Playwright
+        run: pwsh tests/LumexUI.Docs.SmokeTests/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: Browser smoke tests
+        run: dotnet test tests/LumexUI.Docs.SmokeTests -c Release --no-build
+        env:
+          LUMEXUI_DOCS_PATH: ${{ github.workspace }}/artifacts/docs
 
       - name: Pack LumexUI
         run: dotnet pack src/LumexUI/LumexUI.csproj -c Release --no-build --output nupkgs
