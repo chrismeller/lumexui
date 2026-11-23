@@ -3,7 +3,7 @@
   "private": "true",
   "scripts": {},
   "dependencies": {
-    "@floating-ui/dom": "^1.6.10"
+    "@floating-ui/dom": "^1.8.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
