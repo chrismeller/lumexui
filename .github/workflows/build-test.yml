@@ -21,7 +21,7 @@ concurrency:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       # Credentials for the "chrismeller" GitHub Packages source in nuget.config.
       NuGetPackageSourceCredentials_chrismeller: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
@@ -41,9 +41,22 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Test
-        run: dotnet test -c Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage"
+        run: dotnet test tests/LumexUI.Tests -c Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage"
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      # The smoke tests run real Chromium against the published docs site, so the JS that the unit tests mock
+      # (popover.bundle.js, the component scripts, Blazor WebAssembly) is executed. See tests/LumexUI.Docs.SmokeTests.
+      - name: Publish the docs site
+        run: dotnet publish docs/LumexUI.Docs -c Release --no-restore -o artifacts/docs
+
+      - name: Install Chromium for Playwright
+        run: pwsh tests/LumexUI.Docs.SmokeTests/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: Browser smoke tests
+        run: dotnet test tests/LumexUI.Docs.SmokeTests -c Release --no-build --no-restore --verbosity normal
+        env:
+          LUMEXUI_DOCS_PATH: ${{ github.workspace }}/artifacts/docs

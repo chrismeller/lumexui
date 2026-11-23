@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LumexUI.Docs.Client", "docs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumexUI.Shared.Icons", "src\LumexUI.Shared.Icons\LumexUI.Shared.Icons.csproj", "{9C883692-7F43-4E72-8610-AB1996BED8BC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LumexUI.Docs.SmokeTests", "tests\LumexUI.Docs.SmokeTests\LumexUI.Docs.SmokeTests.csproj", "{1D15B599-CBBD-4EB7-B938-4C9B310D0642}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,11 +60,16 @@ Global
 		{9C883692-7F43-4E72-8610-AB1996BED8BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C883692-7F43-4E72-8610-AB1996BED8BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C883692-7F43-4E72-8610-AB1996BED8BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D15B599-CBBD-4EB7-B938-4C9B310D0642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D15B599-CBBD-4EB7-B938-4C9B310D0642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D15B599-CBBD-4EB7-B938-4C9B310D0642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D15B599-CBBD-4EB7-B938-4C9B310D0642}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{1D15B599-CBBD-4EB7-B938-4C9B310D0642} = {898610F1-A6C1-422C-84C9-C1E386957F31}
 		{F5DCF265-756B-4B25-AECA-15B9FF2DCB66} = {5DBC44B8-5B92-4504-8B8F-91A1672251E6}
 		{157B8BDD-2EEF-4A69-AEA5-CAA3650CF73C} = {3F4DE3FA-2636-440C-ACCC-137BAD95BAC4}
 		{06E849E9-A8EA-410B-83BC-0366524C4953} = {898610F1-A6C1-422C-84C9-C1E386957F31}

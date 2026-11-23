@@ -31,13 +31,28 @@
                 { "limit", req.Count },
             } );
 
-            var response = await HttpClient.GetFromJsonAsync<FoodRecallQueryResult>( url, req.CancellationToken );
-            return DataSourceResult.From(
-                items: response!.Results,
-                totalItemCount: response!.Meta.Results.Total );
+            try
+            {
+                var response = await HttpClient.GetFromJsonAsync<FoodRecallQueryResult>( url, req.CancellationToken );
+                return DataSourceResult.From(
+                    items: response!.Results,
+                    totalItemCount: response!.Meta.Results.Total );
+            }
+            catch( HttpRequestException )
+            {
+                // The API is unreachable, so show an empty grid.
+                return DataSourceResult.From( items: Array.Empty<FoodRecall>(), totalItemCount: 0 );
+            }
         };
 
-        _resultsCount = ( await HttpClient.GetFromJsonAsync<FoodRecallQueryResult>( "https://api.fda.gov/food/enforcement.json" ) )!.Meta.Results.Total;
+        try
+        {
+            _resultsCount = ( await HttpClient.GetFromJsonAsync<FoodRecallQueryResult>( "https://api.fda.gov/food/enforcement.json" ) )!.Meta.Results.Total;
+        }
+        catch( HttpRequestException )
+        {
+            _resultsCount = 0;
+        }
     }
 
     private class FoodRecall
