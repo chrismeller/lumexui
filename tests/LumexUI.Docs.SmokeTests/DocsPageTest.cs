@@ -1,3 +1,6 @@
+using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
+
 namespace LumexUI.Docs.SmokeTests;
 
 /// <summary>
@@ -7,6 +10,10 @@ namespace LumexUI.Docs.SmokeTests;
 public abstract class DocsPageTest( DocsSite site ) : IAsyncLifetime
 {
     private static readonly TimeSpan InteractiveTimeout = TimeSpan.FromSeconds( 30 );
+    private static readonly Regex FetchCannotLoad = new( @"Fetch API cannot load (?<url>\S+?)\.?\s*$" );
+
+    private readonly List<string> _errors = [];
+    private readonly ConcurrentDictionary<string, byte> _abortedInFrames = new();
 
     private IBrowserContext _context = null!;
     private long _requests;
@@ -20,8 +27,32 @@ public abstract class DocsPageTest( DocsSite site ) : IAsyncLifetime
     /// Console errors and uncaught exceptions on the docs site's own origin. Other hosts don't resolve (see
     /// <see cref="DocsSite"/>), and the errors for those failed requests are reported at their own URL, so they
     /// are not listed.
+    /// <para>
+    /// Also left out: "Fetch API cannot load" for a request that an example iframe aborted. On the navbar page
+    /// Blazor replaces the prerendered example iframes, and the replaced frames abort the WebAssembly downloads
+    /// they had started. A download that fails for any other reason is still listed.
+    /// </para>
     /// </summary>
-    protected List<string> Errors { get; } = [];
+    protected IReadOnlyList<string> Errors
+    {
+        get
+        {
+            lock( _errors )
+            {
+                return _errors.Where( error => !IsAbortedInFrame( error ) ).ToList();
+            }
+        }
+    }
+
+    protected void ClearErrors()
+    {
+        lock( _errors )
+        {
+            _errors.Clear();
+        }
+
+        _abortedInFrames.Clear();
+    }
 
     public async Task InitializeAsync()
     {
@@ -29,17 +60,39 @@ public abstract class DocsPageTest( DocsSite site ) : IAsyncLifetime
 
         _context.Request += ( _, _ ) => Interlocked.Increment( ref _requests );
         _context.RequestFinished += ( _, _ ) => Interlocked.Increment( ref _settled );
-        _context.RequestFailed += ( _, _ ) => Interlocked.Increment( ref _settled );
+        _context.RequestFailed += ( _, request ) =>
+        {
+            if( request.Failure == "net::ERR_ABORTED" && request.Frame != Page.MainFrame )
+            {
+                _abortedInFrames.TryAdd( request.Url, 0 );
+            }
+
+            Interlocked.Increment( ref _settled );
+        };
 
         Page = await _context.NewPageAsync();
         Page.Console += ( _, message ) =>
         {
             if( message.Type == "error" && message.Location.StartsWith( Site.BaseUrl, StringComparison.Ordinal ) )
             {
-                Errors.Add( $"{message.Location}: {message.Text}" );
+                AddError( $"{message.Location}: {message.Text}" );
             }
         };
-        Page.PageError += ( _, error ) => Errors.Add( $"Uncaught: {error}" );
+        Page.PageError += ( _, error ) => AddError( $"Uncaught: {error}" );
+    }
+
+    private void AddError( string error )
+    {
+        lock( _errors )
+        {
+            _errors.Add( error );
+        }
+    }
+
+    private bool IsAbortedInFrame( string error )
+    {
+        var match = FetchCannotLoad.Match( error );
+        return match.Success && _abortedInFrames.ContainsKey( match.Groups["url"].Value );
     }
 
     public async Task DisposeAsync()

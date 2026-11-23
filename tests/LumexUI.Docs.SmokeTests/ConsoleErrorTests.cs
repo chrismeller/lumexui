@@ -18,7 +18,7 @@ public sealed class ConsoleErrorTests( DocsSite site ) : DocsPageTest( site )
         var failures = new List<string>();
         foreach( var path in paths )
         {
-            Errors.Clear();
+            ClearErrors();
             // Wait for Blazor and for the WebAssembly download and start, including the example iframes on the navbar page,
             // each of which starts its own Blazor.
             await GotoAsync( path, WaitUntilState.Load );
