@@ -93,8 +93,10 @@ jobs:
       - name: Publish the docs site
         run: dotnet publish docs/LumexUI.Docs -c Release -o artifacts/docs
 
+      # Same as Build and Test: no --with-deps (the runner already has Chromium's libraries) and only the
+      # headless shell. Not cached here, because releases are rare and the download takes seconds.
       - name: Install Chromium for Playwright
-        run: pwsh tests/LumexUI.Docs.SmokeTests/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+        run: pwsh tests/LumexUI.Docs.SmokeTests/bin/Release/net10.0/playwright.ps1 install --only-shell chromium
 
       - name: Browser smoke tests
         run: dotnet test tests/LumexUI.Docs.SmokeTests -c Release --no-build
