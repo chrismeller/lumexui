@@ -19,6 +19,11 @@
 		<ProjectReference Include="../LumexUI.Docs.Generator/LumexUI.Docs.Generator.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<!-- Build inputs for the Tailwind CLI, not part of the site. -->
+		<Content Remove="package.json;pnpm-lock.yaml" />
+	</ItemGroup>
+
 	<!--
 		Build the generator through MSBuild so a solution build shares one build of it,
 		then run it without building. A plain `dotnet run` rebuilt the generator in a
@@ -29,43 +34,17 @@
 		<Exec Command="dotnet run --no-build -c $(Configuration) --project &quot;$(DocsGeneratorProject)&quot;" />
 	</Target>
 
-	<Target Name="InstallTailwind" AfterTargets="Build" Condition="!Exists('tailwindcss.exe')">
-		<PropertyGroup>
-			<IsLinux>$([MSBuild]::IsOSPlatform('Linux'))</IsLinux>
-			<IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
-		</PropertyGroup>
-		
-		<PropertyGroup>
-			<TailwindVersion>v4.1.11</TailwindVersion>
-			<TailwindExe Condition="$(IsLinux)">tailwindcss-linux-x64</TailwindExe>
-			<TailwindExe Condition="$(IsWindows)">tailwindcss-windows-x64.exe</TailwindExe>
-			<TailwindUrl>https://github.com/tailwindlabs/tailwindcss/releases/download/$(TailwindVersion)/$(TailwindExe)</TailwindUrl>
-		</PropertyGroup>
-
-		<!-- Download Tailwind CLI -->
-		<Exec Command="curl -LO $(TailwindUrl)" />
-
-		<!-- Rename the file (Windows) -->
-		<Exec Command="ren $(TailwindExe) tailwindcss.exe" Condition="$(IsWindows)" />
-
-		<!-- Rename the file (Linux) -->
-		<Exec Command="mv $(TailwindExe) tailwindcss" Condition="$(IsLinux)" />
-		<Exec Command="chmod +x tailwindcss" Condition="$(IsLinux)" />
+	<!--
+		The Tailwind CLI comes from npm (package.json), so Renovate sees its version and the pnpm lockfile pins its
+		integrity hashes. Building the docs therefore needs Node and pnpm (mise.toml), like src/LumexUI.
+	-->
+	<Target Name="DocsPnpmInstall" AfterTargets="Build" Condition="!Exists('node_modules')">
+		<Exec Command="pnpm install --frozen-lockfile" />
 	</Target>
 
-	<Target Name="RunTailwind" AfterTargets="InstallTailwind">
-		<PropertyGroup>
-			<IsLinux>$([MSBuild]::IsOSPlatform('Linux'))</IsLinux>
-			<IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
-		</PropertyGroup>
-
-		<PropertyGroup>
-			<TailwindCmd Condition="$(IsLinux)">./tailwindcss</TailwindCmd>
-			<TailwindCmd Condition="$(IsWindows)">tailwindcss</TailwindCmd>
-		</PropertyGroup>
-
-		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/docs.css" Condition="'$(Configuration)' == 'Debug'" />	
-		<Exec Command="$(TailwindCmd) -i ./Styles/globals.css -o ./wwwroot/css/docs.css --minify" Condition="'$(Configuration)' == 'Release'" />
+	<Target Name="RunTailwind" AfterTargets="DocsPnpmInstall">
+		<Exec Command="pnpm exec tailwindcss -i ./Styles/globals.css -o ./wwwroot/css/docs.css" Condition="'$(Configuration)' == 'Debug'" />
+		<Exec Command="pnpm exec tailwindcss -i ./Styles/globals.css -o ./wwwroot/css/docs.css --minify" Condition="'$(Configuration)' == 'Release'" />
 	</Target>
 
 </Project>
