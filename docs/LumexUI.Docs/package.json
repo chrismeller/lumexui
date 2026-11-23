@@ -1,0 +1,17 @@
+{
+  "name": "lumexui-docs",
+  "private": true,
+  "scripts": {},
+  "devDependencies": {
+    "@tailwindcss/cli": "4.1.11",
+    "@tailwindcss/typography": "0.5.16",
+    "tailwindcss": "4.1.11"
+  },
+  "packageManager": "pnpm@10.34.5",
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher",
+      "@tailwindcss/oxide"
+    ]
+  }
+}
