@@ -93,8 +93,6 @@ Restoring needs the GitHub Packages credentials from [step 3](#3-give-nuget-the-
 
 Issues and pull requests are welcome on [this repository](https://github.com/chrismeller/lumexui/issues).
 
-Please adhere to this project's [Code of Conduct](https://github.com/chrismeller/lumexui/blob/main/CODE_OF_CONDUCT.md).
-
 ## License
 
 LumexUI is licensed under the terms of the [MIT license](https://github.com/chrismeller/lumexui/blob/main/LICENSE).
