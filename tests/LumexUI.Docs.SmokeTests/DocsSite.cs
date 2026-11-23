@@ -44,11 +44,12 @@ public sealed class DocsSite : IAsyncLifetime
         StartServer( dll );
         await WaitForServerAsync();
 
-        // Downloads the Chromium build this Playwright version expects, if it isn't there yet.
-        var exitCode = Microsoft.Playwright.Program.Main( ["install", "chromium"] );
+        // Downloads the headless Chromium build this Playwright version expects, if it isn't there yet. The tests only
+        // run headless, so the full browser (another 200 MB) isn't needed. CI installs the same thing first.
+        var exitCode = Microsoft.Playwright.Program.Main( ["install", "--only-shell", "chromium"] );
         if( exitCode != 0 )
         {
-            throw new InvalidOperationException( $"`playwright install chromium` exited with code {exitCode}." );
+            throw new InvalidOperationException( $"`playwright install --only-shell chromium` exited with code {exitCode}." );
         }
 
         _playwright = await Playwright.CreateAsync();
