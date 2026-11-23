@@ -11,8 +11,8 @@
     // includes updates to GitHub Actions, e.g. `uses: actions/checkout@v3`
     "customManagers:githubActionsVersions",
 
-    // only sets how Renovate merges (as a PR, not a branch) when a rule turns automerge on; it doesn't turn it
-    // on. Nothing auto-merges until the repo has PR checks.
+    // only sets how Renovate merges (as a PR, not a branch); it doesn't turn automerge on. The "Auto-merge
+    // non-major updates" packageRule below does that.
     ":automergePr"
   ],
 
@@ -85,6 +85,14 @@
   ],
 
   "packageRules": [
+    // Non-major updates merge on their own once the PR checks pass. Majors still wait for approval in the
+    // dependency dashboard. This relies on main requiring the build-test check: GitHub's auto-merge, which
+    // Renovate uses, merges at once when no check is required.
+    {
+      "description": "Auto-merge non-major updates once the PR checks pass",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
     // The SDK pin lives in global.json and mise.toml; a mismatch breaks the build, so they move together.
     {
       "description": "Group the .NET SDK pins in global.json and mise.toml into one PR",
