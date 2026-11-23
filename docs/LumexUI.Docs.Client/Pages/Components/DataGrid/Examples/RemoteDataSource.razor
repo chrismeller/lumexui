@@ -13,11 +13,19 @@
     {
         _peopleProvider = async req =>
         {
-            var response = await HttpClient.GetFromJsonAsync<PersonQueryResult>( "https://swapi.py4e.com/api/people/", req.CancellationToken );
+            try
+            {
+                var response = await HttpClient.GetFromJsonAsync<PersonQueryResult>( "https://swapi.py4e.com/api/people/", req.CancellationToken );
 
-            return DataSourceResult.From(
-                items: response!.Results,
-                totalItemCount: response!.Results.Length );
+                return DataSourceResult.From(
+                    items: response!.Results,
+                    totalItemCount: response!.Results.Length );
+            }
+            catch( HttpRequestException )
+            {
+                // The API is unreachable, so show an empty grid.
+                return DataSourceResult.From( items: Array.Empty<Person>(), totalItemCount: 0 );
+            }
         };
     }
 
