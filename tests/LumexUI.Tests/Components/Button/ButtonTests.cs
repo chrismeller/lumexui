@@ -11,7 +11,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class ButtonTests : TestContext
+public class ButtonTests : BunitContext
 {
 	public ButtonTests()
 	{
@@ -21,7 +21,7 @@ public class ButtonTests : TestContext
 	[Fact]
 	public void Button_ShouldRenderCorrectly()
 	{
-		var action = () => RenderComponent<LumexButton>();
+		var action = () => Render<LumexButton>();
 
 		action.Should().NotThrow();
 	}
@@ -29,7 +29,7 @@ public class ButtonTests : TestContext
 	[Fact]
 	public void Button_Disabled_ShouldHaveDisabledAttribute()
 	{
-		var cut = RenderComponent<LumexButton>( p => p
+		var cut = Render<LumexButton>( p => p
 			.Add( p => p.Disabled, true )
 		);
 
@@ -42,7 +42,7 @@ public class ButtonTests : TestContext
 	public void Button_Disabled_ShouldNotTriggerClick()
 	{
 		var clicked = false;
-		var cut = RenderComponent<LumexButton>( p => p
+		var cut = Render<LumexButton>( p => p
 			.Add( p => p.Disabled, true )
 			.Add( p => p.OnClick, () => clicked = true )
 		);
@@ -57,7 +57,7 @@ public class ButtonTests : TestContext
 	public void Button_NotDisabled_ShouldTriggerClick()
 	{
 		var clicked = false;
-		var cut = RenderComponent<LumexButton>( p => p
+		var cut = Render<LumexButton>( p => p
 			.Add( p => p.Disabled, false )
 			.Add( p => p.OnClick, () => clicked = true )
 		);
@@ -71,7 +71,7 @@ public class ButtonTests : TestContext
 	[Fact]
 	public void Button_Type_ShouldHaveCorrectTypeAttribute()
 	{
-		var cut = RenderComponent<LumexButton>( p => p
+		var cut = Render<LumexButton>( p => p
 			.Add( p => p.Type, ButtonType.Submit )
 		);
 
@@ -83,7 +83,7 @@ public class ButtonTests : TestContext
 	[Fact]
 	public void Button_StartContent_ShouldRenderWithStartContent()
 	{
-		var cut = RenderComponent<LumexButton>( p => p
+		var cut = Render<LumexButton>( p => p
 			.Add( p => p.StartContent, "start-content" )
 		);
 
@@ -93,7 +93,7 @@ public class ButtonTests : TestContext
 	[Fact]
 	public void Button_EndContent_ShouldRenderWithEndContent()
 	{
-		var cut = RenderComponent<LumexButton>( p => p
+		var cut = Render<LumexButton>( p => p
 			.Add( p => p.EndContent, "end-content" )
 		);
 

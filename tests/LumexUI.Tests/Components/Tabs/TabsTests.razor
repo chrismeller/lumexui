@@ -1,5 +1,5 @@
 ﻿@namespace LumexUI.Tests.Components
-@inherits TestContext
+@inherits BunitContext
 
 @code {
     private readonly TestModel[] _tabs = new TestModel[]
@@ -15,7 +15,7 @@
         Services.AddSingleton<MotionJsInterop>();
 
         var module = JSInterop.SetupModule( "./_content/LumexUI.Motion/motion.js" );
-        module.SetupVoid( "motion.animateLayoutId", _ => true );
+        module.SetupVoid( "motion.animateLayoutId", _ => true ).SetVoidResult();
     }
 
     [Fact]
@@ -77,7 +77,7 @@
     [Fact]
     public void ShouldAutoSelectTabIfRouteMatches()
     {
-        var navigationManager = Services.GetRequiredService<FakeNavigationManager>();
+        var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
         navigationManager.NavigateTo("item-2");
 
         var cut = Render(

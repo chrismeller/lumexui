@@ -1,5 +1,5 @@
 @namespace LumexUI.Tests.Components
-@inherits TestContext
+@inherits BunitContext
 
 @code {
     public ModalTests()
@@ -7,10 +7,10 @@
         Services.AddSingleton<TwMerge>();
 
         var module = JSInterop.SetupModule( "./_content/LumexUI/js/components/modal.js" );
-        module.SetupVoid( "modal.initialize", _ => true );
-        module.SetupVoid( "modal.open", _ => true );
-        module.SetupVoid( "modal.close", _ => true );
-        module.SetupVoid( "modal.destroy", _ => true );
+        module.SetupVoid( "modal.initialize", _ => true ).SetVoidResult();
+        module.SetupVoid( "modal.open", _ => true ).SetVoidResult();
+        module.SetupVoid( "modal.close", _ => true ).SetVoidResult();
+        module.SetupVoid( "modal.destroy", _ => true ).SetVoidResult();
     }
 
     [Fact]

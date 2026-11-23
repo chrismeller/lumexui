@@ -11,7 +11,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class CheckboxTests : TestContext
+public class CheckboxTests : BunitContext
 {
 	public CheckboxTests()
 	{
@@ -21,7 +21,7 @@ public class CheckboxTests : TestContext
 	[Fact]
 	public void Checkbox_ShouldRenderCorrectly()
 	{
-		var action = () => RenderComponent<LumexCheckbox>( p => p
+		var action = () => Render<LumexCheckbox>( p => p
 			.Add( p => p.ValueExpression, () => true )
 		);
 
@@ -31,7 +31,7 @@ public class CheckboxTests : TestContext
 	[Fact]
 	public void Checkbox_WithChildContent_ShouldRenderCorrectly()
 	{
-		var cut = RenderComponent<LumexCheckbox>( p => p
+		var cut = Render<LumexCheckbox>( p => p
 			.Add( p => p.ValueExpression, () => true )
 			.AddChildContent( "checkbox" )
 		);
@@ -42,7 +42,7 @@ public class CheckboxTests : TestContext
 	[Fact]
 	public void Checkbox_WithCheckIcon_ShouldRenderCustomIcon()
 	{
-		var cut = RenderComponent<LumexCheckbox>( p => p
+		var cut = Render<LumexCheckbox>( p => p
 			.Add( p => p.ValueExpression, () => true )
 			.Add( p => p.IconContent, "check-icon" )
 		);
@@ -53,7 +53,7 @@ public class CheckboxTests : TestContext
 	[Fact]
 	public void Checkbox_OnChange_ShouldChangeValue()
 	{
-		var cut = RenderComponent<LumexCheckbox>( p => p
+		var cut = Render<LumexCheckbox>( p => p
 			.Add( p => p.Value, false )
 			.Add( p => p.ValueExpression, () => true )
 		);
@@ -71,7 +71,7 @@ public class CheckboxTests : TestContext
 	[InlineData( false, true )]
 	public void Checkbox_DisabledOrReadOnly_ShouldNotTriggerChange( bool disabled, bool readOnly )
 	{
-		var cut = RenderComponent<LumexCheckbox>( p => p
+		var cut = Render<LumexCheckbox>( p => p
 			.Add( p => p.Value, true )
 			.Add( p => p.ValueExpression, () => true )
 			.Add( p => p.Disabled, disabled )
@@ -89,7 +89,7 @@ public class CheckboxTests : TestContext
 	[Fact]
 	public void Checkbox_WithContext_ShouldPreferOwnParameterValues()
 	{
-		var cut = RenderComponent<LumexCheckboxGroup>( p => p
+		var cut = Render<LumexCheckboxGroup>( p => p
 			.Add( p => p.Label, "Select cities" )
 			.Add( p => p.Description, "Select the cities you want to visit" )
 			.Add( p => p.Size, Size.Large )
@@ -123,7 +123,7 @@ public class CheckboxTests : TestContext
 	[Fact]
 	public async Task Checkbox_SetCurrentValueAsString_ShouldThrowNotSupported()
 	{
-		var cut = RenderComponent<LumexCheckbox>( p => p
+		var cut = Render<LumexCheckbox>( p => p
 			.Add( p => p.Value, false )
 			.Add( p => p.ValueExpression, () => true )
 		);

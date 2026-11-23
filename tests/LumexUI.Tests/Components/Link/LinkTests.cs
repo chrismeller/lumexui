@@ -8,7 +8,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class LinkTests : TestContext
+public class LinkTests : BunitContext
 {
 	public LinkTests()
 	{
@@ -18,7 +18,7 @@ public class LinkTests : TestContext
 	[Fact]
 	public void Link_ShouldRenderCorrectly()
 	{
-		var action = () => RenderComponent<LumexLink>();
+		var action = () => Render<LumexLink>();
 
 		action.Should().NotThrow();
 	}
@@ -26,7 +26,7 @@ public class LinkTests : TestContext
 	[Fact]
 	public void Link_External_ShouldSetCorrectAttributes()
 	{
-		var cut = RenderComponent<LumexLink>( p => p
+		var cut = Render<LumexLink>( p => p
 			.Add( p => p.External, true )
 		);
 
@@ -44,7 +44,7 @@ public class LinkTests : TestContext
 			["data-custom"] = "custom-attribute-value"
 		};
 
-		var cut = RenderComponent<LumexLink>( p => p
+		var cut = Render<LumexLink>( p => p
 			.Add( p => p.AdditionalAttributes, attributes )
 		);
 

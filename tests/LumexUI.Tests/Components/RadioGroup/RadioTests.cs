@@ -10,7 +10,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class RadioTests : TestContext
+public class RadioTests : BunitContext
 {
     public RadioTests()
     {
@@ -21,7 +21,7 @@ public class RadioTests : TestContext
     public void Radio_MustBeInsideRadioGroup()
     {
         var action = () =>
-            RenderComponent<LumexRadio<string>>( p =>
+            Render<LumexRadio<string>>( p =>
                 p.Add( r => r.Value, "tallinn" )
                     .AddChildContent( "Tallinn" )
             );

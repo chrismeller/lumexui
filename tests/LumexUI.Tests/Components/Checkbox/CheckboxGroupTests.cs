@@ -8,7 +8,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class CheckboxGroupTests : TestContext
+public class CheckboxGroupTests : BunitContext
 {
     public CheckboxGroupTests()
     {
@@ -18,7 +18,7 @@ public class CheckboxGroupTests : TestContext
     [Fact]
     public void CheckboxGroup_ShouldRenderCorrectly()
     {
-        var action = () => RenderComponent<LumexCheckboxGroup>( p => p
+        var action = () => Render<LumexCheckboxGroup>( p => p
             .Add( p => p.Label, "Select cities" )
             .Add( p => p.Description, "Select the cities you want to visit" )
             .AddChildContent<LumexCheckbox>( p => p
@@ -39,7 +39,7 @@ public class CheckboxGroupTests : TestContext
     [InlineData( false, true )]
     public void CheckboxGroup_DisabledOrReadOnly_ShouldNotTriggerChange( bool disabled, bool readOnly )
     {
-        var cut = RenderComponent<LumexCheckboxGroup>( p => p
+        var cut = Render<LumexCheckboxGroup>( p => p
             .Add( p => p.Label, "Select cities" )
             .Add( p => p.Description, "Select the cities you want to visit" )
             .Add( p => p.Disabled, disabled )

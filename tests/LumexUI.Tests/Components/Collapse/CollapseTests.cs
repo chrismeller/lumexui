@@ -10,7 +10,7 @@ using static LumexUI.LumexCollapse;
 
 namespace LumexUI.Tests.Components;
 
-public class CollapseTests : TestContext
+public class CollapseTests : BunitContext
 {
     public CollapseTests()
     {
@@ -21,7 +21,7 @@ public class CollapseTests : TestContext
     [Fact]
     public void Collapse_ShouldRenderCorrectly()
     {
-        var action = () => RenderComponent<LumexCollapse>();
+        var action = () => Render<LumexCollapse>();
 
         action.Should().NotThrow();
     }
@@ -29,7 +29,7 @@ public class CollapseTests : TestContext
     [Fact]
     public void Collapse_InitiallyExpanded_ShouldBeExpanded()
     {
-        var cut = RenderComponent<LumexCollapse>( p => p
+        var cut = Render<LumexCollapse>( p => p
             .Add( p => p.Expanded, true )
         );
 
@@ -39,16 +39,16 @@ public class CollapseTests : TestContext
     [Fact]
     public void Collapse_OnExpandedChange_ShouldEnterCorrectState()
     {
-        var cut = RenderComponent<LumexCollapse>();
+        var cut = Render<LumexCollapse>();
         var collapse = cut.Find( "div" );
 
-        cut.SetParametersAndRender( p => p.Add( p => p.Expanded, true ) );
+        cut.Render( p => p.Add( p => p.Expanded, true ) );
         cut.Instance.State.Should().Be( CollapseState.Expanding );
 
         collapse.TriggerEvent( "ontransitionend", new EventArgs() );
         cut.Instance.State.Should().Be( CollapseState.Expanded );
 
-        cut.SetParametersAndRender( p => p.Add( p => p.Expanded, false ) );
+        cut.Render( p => p.Add( p => p.Expanded, false ) );
         cut.Instance.State.Should().Be( CollapseState.Collapsing );
 
         collapse.TriggerEvent( "ontransitionend", new EventArgs() );

@@ -10,7 +10,7 @@ using TailwindMerge;
 
 namespace LumexUI.Tests.Components;
 
-public class AccordionTests : TestContext
+public class AccordionTests : BunitContext
 {
 	public AccordionTests()
 	{
@@ -21,7 +21,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_ShouldRenderCorrectly()
 	{
-		var action = () => RenderComponent<LumexAccordion>( p => p
+		var action = () => Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 			)
@@ -33,7 +33,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_ShouldDisplayCorrectAmountOfItems()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 			)
@@ -48,7 +48,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_ExpandedItems_ShouldBeOpened()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.Add( p => p.ExpandedItems, ["1"] )
 			.Add( p => p.SelectionMode, SelectionMode.Multiple )
 			.AddChildContent<LumexAccordionItem>( p => p
@@ -68,7 +68,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_DisabledItems_ShouldBeDisabled()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.Add( p => p.DisabledItems, ["1"] )
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
@@ -87,7 +87,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_OnAccordionItemClick_ShouldExpand()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 			)
@@ -109,7 +109,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_OnDisabledAccordionItemClick_ShouldNotExpand()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.Disabled, true )
@@ -127,7 +127,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_SelectionModeNone_ShouldNotExpand()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.Add( p => p.SelectionMode, SelectionMode.None )
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
@@ -145,7 +145,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_SelectionModeMultiple_ShouldExpandMoreThanOne()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.Add( p => p.SelectionMode, SelectionMode.Multiple )
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
@@ -169,7 +169,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_ExpandAsync_ShouldExpand()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 			)
@@ -184,7 +184,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_CollapseAsync_ShouldCollapse()
 	{
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 			)
@@ -201,7 +201,7 @@ public class AccordionTests : TestContext
 	{
 		var startContent = "start-content";
 
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.StartContent, startContent )
@@ -216,7 +216,7 @@ public class AccordionTests : TestContext
 	{
 		var title = "title";
 
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.Title, title )
@@ -231,7 +231,7 @@ public class AccordionTests : TestContext
 	{
 		var titleContent = "title-content";
 
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.TitleContent, titleContent )
@@ -246,7 +246,7 @@ public class AccordionTests : TestContext
 	{
 		var subtitle = "subtitle";
 
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.Subtitle, subtitle )
@@ -261,7 +261,7 @@ public class AccordionTests : TestContext
 	{
 		var subtitleContent = "subtitle";
 
-		var cut = RenderComponent<LumexAccordion>( p => p
+		var cut = Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.SubtitleContent, subtitleContent )
@@ -274,7 +274,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_MissingAccordionItemId_ShouldThrowInvalidOperation()
 	{
-		var action = () => RenderComponent<LumexAccordion>( p => p
+		var action = () => Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>()
 		);
 
@@ -284,7 +284,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_TitleAndTitleContent_ShouldThrowInvalidOperation()
 	{
-		var action = () => RenderComponent<LumexAccordion>( p => p
+		var action = () => Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.Title, "title" )
@@ -298,7 +298,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void Accordion_SubtitleAndSubtitleContent_ShouldThrowInvalidOperation()
 	{
-		var action = () => RenderComponent<LumexAccordion>( p => p
+		var action = () => Render<LumexAccordion>( p => p
 			.AddChildContent<LumexAccordionItem>( p => p
 				.Add( p => p.Id, "1" )
 				.Add( p => p.Subtitle, "subtitle" )
@@ -312,7 +312,7 @@ public class AccordionTests : TestContext
 	[Fact]
 	public void AccordionItem_StandaloneUsage_ShouldThrowInvalidOperation()
 	{
-		var action = () => RenderComponent<LumexAccordionItem>( p => p
+		var action = () => Render<LumexAccordionItem>( p => p
 			.Add( p => p.Id, "1" )
 		);
 
