@@ -77,6 +77,9 @@ jobs:
       - name: Pack LumexUI
         run: dotnet pack src/LumexUI/LumexUI.csproj -c Release --no-build --output nupkgs
 
+      - name: Check package contents
+        run: dotnet run scripts/check-package.cs -- nupkgs/LumexUI.*.nupkg
+
       - name: Push to GitHub Packages
         run: >-
           dotnet nuget push "nupkgs/*.nupkg"

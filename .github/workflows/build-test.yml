@@ -43,6 +43,14 @@ jobs:
       - name: Test
         run: dotnet test tests/LumexUI.Tests -c Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage"
 
+      # Pack what was just built and check that the package has what consumers need (theme files, targets,
+      # popover.bundle.js, the icons assembly). The release workflow runs the same check before it pushes.
+      - name: Pack
+        run: dotnet pack src/LumexUI/LumexUI.csproj -c Release --no-build --output artifacts/packages
+
+      - name: Check package contents
+        run: dotnet run scripts/check-package.cs -- artifacts/packages/LumexUI.*.nupkg
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         env:
