@@ -3,4 +3,4 @@
 dotnet = "10.0.404"
 # Node and pnpm run the Rollup bundle step in src/LumexUI's build.
 node = "26.13.1"
-pnpm = "10.34.5"
+pnpm = "10.34.9"
