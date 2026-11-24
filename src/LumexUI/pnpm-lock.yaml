@@ -13,10 +13,10 @@ importers:
         version: 1.8.0
     devDependencies:
       '@rollup/plugin-node-resolve':
-        specifier: ^15.2.3
+        specifier: 15.2.3
         version: 15.2.3(rollup@4.59.0)
       rollup:
-        specifier: ^4.59.0
+        specifier: 4.59.0
         version: 4.59.0
 
 packages:
