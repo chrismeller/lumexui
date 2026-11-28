@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       # The .NET SDK (pinned in global.json), Node and pnpm, from mise.toml.
       - name: Setup mise
@@ -52,7 +52,7 @@ jobs:
         run: dotnet run scripts/check-package.cs -- artifacts/packages/LumexUI.*.nupkg
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
